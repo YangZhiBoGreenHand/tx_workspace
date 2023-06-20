@@ -1,6 +1,7 @@
-from app.configs.config_helpers import IntConfigKey, StrConfigKey, load_env_from_yaml_file
 import os
 from pathlib import Path
+
+from app.configs.config_helpers import IntConfigKey, StrConfigKey, load_env_from_yaml_file
 
 env_file_name = os.getenv("ENV_FILE_NAME", "env.yaml")
 PROJECT_HOME = Path(__file__).absolute().parent.parent.parent
@@ -16,3 +17,13 @@ SQLALCHEMY_GLOBAL_QUERY_TIMEOUT = IntConfigKey(
 # 连接数据库的URI地址
 SQLALCHEMY_DATABASE_URI = StrConfigKey(
     env_key="SQLALCHEMY_DATABASE_URI").to_value()
+
+
+# 连接数据库的URI地址 读
+READ_DATABASE_URI = StrConfigKey(
+    env_key="READ_DATABASE_URI").to_value()
+
+
+# 连接数据库的URI地址 写
+WRITE_DATABASE_URI = StrConfigKey(
+    env_key="WRITE_DATABASE_URI").to_value()

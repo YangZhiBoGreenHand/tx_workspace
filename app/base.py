@@ -3,6 +3,8 @@ from app.configs.config import (
     SQLALCHEMY_GLOBAL_QUERY_TIMEOUT,
 )
 from flask import Flask
+from flask_migrate import Migrate
+
 app = Flask(__name__)
 print("app created")
 
@@ -22,15 +24,21 @@ for key in dir(config):
 
 
 def create_sqlalchemy_app():
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
+    from app.helpers.db_helper import MySQLAlchemy
+    _db = MySQLAlchemy(app)
 
-    engine = create_engine(
-        app.config["SQLALCHEMY_DATABASE_URI"],
-        connect_args={"options": f"-c statement_timeout={SQLALCHEMY_GLOBAL_QUERY_TIMEOUT * 1000}"})
-    _db = sessionmaker(bind=engine)
     return _db
 
 
 db = create_sqlalchemy_app()
+
 print("db ready")
+
+
+def migrate_db():
+    from app.models.user.user import User
+    Migrate(app, db)
+
+
+migrate_db()
+print("migrate ready")

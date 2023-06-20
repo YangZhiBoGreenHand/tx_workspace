@@ -68,7 +68,8 @@ class ConfigKey(UserString):
                     os.environ[env_key] = default
             if require and not value:
                 DEPLOY_TYPE = os.getenv("DEPLOY_TYPE")
-                if (not require_deploy_type) or (DEPLOY_TYPE in require_deploy_type):
+                if (not require_deploy_type) or (
+                        DEPLOY_TYPE in require_deploy_type):
                     raise ValueError(
                         f"运行环境为 {DEPLOY_TYPE} 时, 配置 {env_key} 不能为空")
         if value and choice:

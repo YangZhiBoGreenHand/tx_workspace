@@ -1,4 +1,5 @@
 from flask import Blueprint
+
 from app.base import app
 
 __all__ = ["ping_handlers"]
