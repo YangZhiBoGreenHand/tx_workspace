@@ -1,6 +1,8 @@
 from flask import Blueprint
 
 from app.base import app
+from app.blueprints.api import blueprint as api_bp
+from app.blueprints.api import *
 
 __all__ = ["ping_handlers"]
 
@@ -15,3 +17,4 @@ def root_head_ping():
 
 
 app.register_blueprint(root, url_prefix="/root")
+app.register_blueprint(api_bp.api, url_prefix="/api")

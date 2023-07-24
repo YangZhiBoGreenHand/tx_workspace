@@ -36,7 +36,7 @@ print("db ready")
 
 
 def migrate_db():
-    from app.models.user.user import User
+    from app.models import __init__
     Migrate(app, db)
 
 
