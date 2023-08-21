@@ -1,8 +1,8 @@
 from flask import Blueprint
 
 from app.base import app
-from app.blueprints.api import blueprint as api_bp
 from app.blueprints.api import *
+from app.blueprints.api import blueprint as api_bp
 
 __all__ = ["ping_handlers"]
 

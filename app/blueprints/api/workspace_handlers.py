@@ -4,9 +4,10 @@ from flask import request, jsonify
 from app.base import db
 from app.helpers.id_helper import IdServer
 from app.helpers.db_helper import *
+from app.helpers.handler_context import HandlerContext as context
 
 
-@api.route('/workspace', methods=['POST'])
+@api.route('/workspaces', methods=['POST'])
 @mark_readwrite()
 def create_workspace():
     data = request.json
@@ -14,49 +15,49 @@ def create_workspace():
     description = data.get('description')
 
     if not name:
-        return jsonify({'message': 'Name is required'}), 400
+        return context.success({}, 'Name is required', 400)
     id = IdServer().new("wks")
     workspace = Workspace(id=id, name=name, description=description)
 
     db.session.add(workspace)
     db.session.commit()
+    return context.success(workspace, 'Workspace created successfully', 201)
 
-    return jsonify({'message': 'Workspace created successfully', 'workspace': workspace.__repr__()}), 201
 
-
-@api.route('/workspace/<string:id>', methods=['PUT'])
+@api.route('/workspaces/<string:id>', methods=['PUT'])
 @mark_readwrite()
 def update_workspace(id):
     workspace = Workspace.query.get(id)
     if not workspace:
-        return jsonify({'message': 'Workspace not found'}), 404
+        return context.success({}, 'Workspace not found', 404)
 
     data = request.json
     name = data.get('name')
     description = data.get('description')
 
     if not name:
-        return jsonify({'message': 'Name is required'}), 400
-
+        return context.success({}, 'Name is required', 400)
     workspace.name = name
     workspace.description = description
     db.session.commit()
 
-    return jsonify({'message': 'Workspace updated successfully', 'workspace': workspace.__repr__()}), 200
+    return context.success(
+        data=workspace,
+        message='Workspace updated successfully')
 
 
-@api.route('/workspace', methods=['GET'])
+@api.route('/workspaces', methods=['GET'])
 @mark_readonly()
 def get_workspaces():
     workspaces = Workspace.query.all()
-    return jsonify({'workspaces': [workspace.__repr__() for workspace in workspaces]}), 200
+    return context.success(data=workspaces)
 
 
-@api.route('/workspace/<string:id>', methods=['GET'])
+@api.route('/workspaces/<string:id>', methods=['GET'])
 @mark_readonly()
 def get_workspace(id):
     workspace = Workspace.query.get(id)
     if not workspace:
-        return jsonify({'message': 'Workspace not found'}), 404
+        return context.success({}, 'Workspace not found', 404)
 
-    return jsonify({'workspace': workspace.__repr__()}), 200
+    return context.success(data=workspace)

@@ -19,5 +19,9 @@ class Workspace(db.Model):
     create_by = db.Column(db.String(255))
     deleted_at = db.Column(db.DateTime, default=None)
 
-    def __repr__(self):
-        return f'<Workspace {self.id}>'
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description
+        }

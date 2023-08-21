@@ -1,9 +1,9 @@
+from functools import wraps
+
 from flask import Flask, g, has_app_context
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from functools import wraps
-
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 _ATTR_SESSION_TYPE = "_db_type"
 
