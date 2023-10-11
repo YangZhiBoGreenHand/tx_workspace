@@ -15,3 +15,6 @@
     flask db upgrade
     5.格式化代码
     ./format.sh
+    6.异步任务启动 worker 
+    celery -A app.celery.celery_app:celery_app worker --loglevel=info
+    :celery_app 是指定启动的时候 回去寻找你 实例化出来的 Celery 

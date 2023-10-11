@@ -26,3 +26,7 @@ READ_DATABASE_URI = StrConfigKey(
 # 连接数据库的URI地址 写
 WRITE_DATABASE_URI = StrConfigKey(
     env_key="WRITE_DATABASE_URI").to_value()
+
+# Celery 异步任务 连接 rabbitmq 的URI地址
+CELERY_BROKER_URL = StrConfigKey(
+    env_key="CELERY_BROKER_URL").to_value()
