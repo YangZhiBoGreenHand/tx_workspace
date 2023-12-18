@@ -15,6 +15,13 @@ from langchain.callbacks import get_openai_callback
 from langchain.chains import ConversationalRetrievalChain, LLMChain, ConversationChain
 from app.base import app, db
 from langchain.prompts import PromptTemplate
+from langchain.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain.llms.openai import OpenAI
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate
+)
 
 
 def track_tokens_usage(chain, chain_input):
@@ -32,14 +39,14 @@ def get_langchain():
     question = data.get('question')
     topic_id = data.get('topic_id')
     # 启动 OpenAI LLM
-    llm = ChatOpenAI(
+    llm = OpenAI(
         openai_api_key=app.config["OPENAI_API_KEY"], openai_proxy="http://127.0.0.1:7890")
     # 加载本地向量数据
-    raw_documents = TextLoader('state_of_the_union.txt').load()
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-    documents = text_splitter.split_documents(raw_documents)
-    retriever = FAISS.from_documents(
-        documents, OpenAIEmbeddings()).as_retriever()
+    # raw_documents = TextLoader('state_of_the_union.txt').load()
+    # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    # documents = text_splitter.split_documents(raw_documents)
+    # retriever = FAISS.from_documents(
+    #     documents, OpenAIEmbeddings()).as_retriever()
     # es 本地向量库的加载方式
     # USERNAME = "elastic"
     # PASSWORD = "elastic"
@@ -67,18 +74,25 @@ def get_langchain():
     # results = db.similarity_search(query)
     # print(results)
     # 创建 retrieval chain 链
-    chain = ConversationalRetrievalChain.from_llm(
-        llm=llm, verbose=True, retriever=retriever, return_source_documents=True, max_tokens_limit=4097)
+    # chain = ConversationalRetrievalChain.from_llm(
+    #     llm=llm, verbose=True, retriever=retriever, return_source_documents=True, max_tokens_limit=4097)
     # 当然也可以不加载向量库，但是需要自己定义模版
     # chain = LLMChain(llm=llm, verbose=True,  max_tokens_limit=4097)
+
+    system_template = """你是一个 ai 聊天助手, 我们之间是有聊天记录的下面就是:
+        {chat_history}
+        请你继续回答我的问题，我的问题是: {question} """
+
+    prompt = PromptTemplate.from_template(system_template)
+    chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
     history_entries = History.query.filter_by(
         topic_id=topic_id, user_id=request.current_user.id).order_by(History.created_at.desc()).limit(10).all()
 
     # 添加用户历史记录
     chat_history = reversed([(history_entry.question, history_entry.answer)
                              for history_entry in history_entries])
-    print(chat_history)
-    chain_input = {"question": question,  "chat_history": chat_history}
+    chain_input = {"question": question,
+                   "chat_history": '\n'.join([' --> '.join(t) for t in chat_history])}
     result = track_tokens_usage(chain, chain_input)
     # 创建用户主题，和 历史记录
     if data.get('first_question'):
@@ -98,3 +112,21 @@ def get_langchain():
     db.session.commit()
 
     return context.success(data={"answer": result["answer"], "topic_id": topic_id})
+
+
+@api.route('/images', methods=['POST'])
+@mark_readwrite()
+@context.custom_jwt_required
+def get_images():
+    data = request.json
+    question = data.get('question')
+    llm = OpenAI(
+        openai_api_key=app.config["OPENAI_API_KEY"], openai_proxy="http://127.0.0.1:7890")
+    prompt = PromptTemplate(
+        input_variables=["image_desc"],
+        template="Generate a detailed prompt to generate an image based on the following description: {image_desc}",
+    )
+    chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
+    image_url = DallEAPIWrapper().run(chain.run(question))
+
+    return context.success(data={"image_url": image_url})
