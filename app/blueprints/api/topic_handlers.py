@@ -18,32 +18,6 @@ from langchain.text_splitter import CharacterTextSplitter
 @mark_readonly()
 @context.custom_jwt_required
 def get_topics():
-    USERNAME = "elastic"
-    PASSWORD = "elastic"
-    ELATICSEARCH_ENDPOINT = "localhost:9200"
-    ELASTCSEARCH_CERT_PATH = "/Users/yangzhibo/projects/tx_workspace/http_ca.crt"
-    url = f'https://{USERNAME}:{PASSWORD}@{ELATICSEARCH_ENDPOINT}'
-    es_connection = Elasticsearch(
-        url, ca_certs=ELASTCSEARCH_CERT_PATH, verify_certs=True)
-    loader = TextLoader("state_of_the_union.txt")
-    documents = loader.load()
-    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=0)
-    docs = text_splitter.split_documents(documents)
-
-    db = ElasticsearchStore.from_documents(docs, embedding=OpenAIEmbeddings(),
-                                           index_name="test-basic",
-                                           es_connection=es_connection)
-
-    db = ElasticsearchStore(
-        embedding=OpenAIEmbeddings(),
-        index_name="test_index",
-        es_connection=es_connection
-    )
-
-    db.client.indices.refresh(index="test-basic")
-    query = "阳志博是毕业于哪儿？"
-    results = db.similarity_search(query)
-    print(results)
     user_id = request.current_user.id
     topics = Topic.query.filter_by(user_id=user_id).all()
     topic_ids = [topic.id for topic in topics]

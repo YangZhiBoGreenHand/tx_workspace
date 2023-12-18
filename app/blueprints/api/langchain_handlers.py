@@ -40,7 +40,33 @@ def get_langchain():
     documents = text_splitter.split_documents(raw_documents)
     retriever = FAISS.from_documents(
         documents, OpenAIEmbeddings()).as_retriever()
-    # 创建 chain 链
+    # es 本地向量库的加载方式
+    # USERNAME = "elastic"
+    # PASSWORD = "elastic"
+    # ELATICSEARCH_ENDPOINT = "localhost:9200"
+    # ELASTCSEARCH_CERT_PATH = "/Users/yangzhibo/projects/tx_workspace/http_ca.crt"
+    # url = f'https://{USERNAME}:{PASSWORD}@{ELATICSEARCH_ENDPOINT}'
+    # es_connection = Elasticsearch(
+    #     url, ca_certs=ELASTCSEARCH_CERT_PATH, verify_certs=True)
+    # loader = TextLoader("state_of_the_union.txt")
+    # documents = loader.load()
+    # text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=0)
+    # docs = text_splitter.split_documents(documents)
+
+    # db = ElasticsearchStore.from_documents(docs, embedding=OpenAIEmbeddings(),
+    #                                        index_name="test-basic",
+    #                                        es_connection=es_connection)
+
+    # db = ElasticsearchStore(
+    #     embedding=OpenAIEmbeddings(),
+    #     index_name="test_index",
+    #     es_connection=es_connection
+    # )
+    # db.client.indices.refresh(index="test-basic")
+    # query = "阳志博是毕业于哪儿？"
+    # results = db.similarity_search(query)
+    # print(results)
+    # 创建 retrieval chain 链
     chain = ConversationalRetrievalChain.from_llm(
         llm=llm, verbose=True, retriever=retriever, return_source_documents=True, max_tokens_limit=4097)
     # 当然也可以不加载向量库，但是需要自己定义模版
