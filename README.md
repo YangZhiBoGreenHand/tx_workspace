@@ -18,3 +18,8 @@
     6.异步任务启动 worker 
     celery -A app.celery.celery_app:celery_app worker --loglevel=info
     :celery_app 是指定启动的时候 回去寻找你 实例化出来的 Celery 
+    使用步骤，倒入对应的异步任务方法，然后就可以异步使用了 add.delay
+    from app.celery.tasks.workspace_task import add
+    7.调试 flask 代码
+    export FLASK_APP=server
+    flask shell

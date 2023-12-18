@@ -9,6 +9,7 @@ from app.helpers.handler_context import HandlerContext as context
 
 @api.route('/workspaces', methods=['POST'])
 @mark_readwrite()
+@context.custom_jwt_required
 def create_workspace():
     data = request.json
     name = data.get('name')
@@ -26,6 +27,7 @@ def create_workspace():
 
 @api.route('/workspaces/<string:id>', methods=['PUT'])
 @mark_readwrite()
+@context.custom_jwt_required
 def update_workspace(id):
     workspace = Workspace.query.get(id)
     if not workspace:
@@ -48,6 +50,7 @@ def update_workspace(id):
 
 @api.route('/workspaces', methods=['GET'])
 @mark_readonly()
+@context.custom_jwt_required
 def get_workspaces():
     workspaces = Workspace.query.all()
     return context.success(data=workspaces)
@@ -55,6 +58,7 @@ def get_workspaces():
 
 @api.route('/workspaces/<string:id>', methods=['GET'])
 @mark_readonly()
+@context.custom_jwt_required
 def get_workspace(id):
     workspace = Workspace.query.get(id)
     if not workspace:

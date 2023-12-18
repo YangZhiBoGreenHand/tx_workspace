@@ -4,6 +4,8 @@ from app.configs.config import (
 )
 from flask import Flask
 from flask_migrate import Migrate
+from flask_redis import FlaskRedis
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 print("app created")
@@ -42,3 +44,9 @@ def migrate_db():
 
 migrate_db()
 print("migrate ready")
+
+redis = FlaskRedis(app)
+print("redis ready")
+
+jwt = JWTManager(app)
+print("jwt ready")

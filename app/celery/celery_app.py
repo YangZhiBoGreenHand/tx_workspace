@@ -1,7 +1,9 @@
-from celery import Celery
-from app.configs import celery_config
-from app.base import app
 import os
+
+from celery import Celery
+
+from app.base import app
+from app.configs import celery_config
 
 
 def discover_tasks_modules(task_dir="tasks"):

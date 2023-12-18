@@ -30,3 +30,29 @@ WRITE_DATABASE_URI = StrConfigKey(
 # Celery 异步任务 连接 rabbitmq 的URI地址
 CELERY_BROKER_URL = StrConfigKey(
     env_key="CELERY_BROKER_URL").to_value()
+
+
+# OPENAI 大模型的私密 KEY
+OPENAI_API_KEY = StrConfigKey(
+    env_key="OPENAI_API_KEY").to_value()
+
+
+# JWT_SECRET_KEY
+JWT_SECRET_KEY = StrConfigKey(
+    env_key="JWT_SECRET_KEY").to_value()
+
+# JWT_SECRET_KEY
+JWT_ACCESS_TOKEN_EXPIRES = IntConfigKey(
+    env_key="JWT_ACCESS_TOKEN_EXPIRES").to_value()
+
+# JWT_SECRET_KEY
+JWT_REFRESH_TOKEN_EXPIRES = IntConfigKey(
+    env_key="JWT_ACCESS_TOKEN_EXPIRES").to_value()
+
+# REDIS_URL
+REDIS_URL = StrConfigKey(
+    env_key="REDIS_URL").to_value()
+
+# MAX_REVOKED_TOKENS
+MAX_REVOKED_TOKENS = IntConfigKey(
+    env_key="MAX_REVOKED_TOKENS").to_value()

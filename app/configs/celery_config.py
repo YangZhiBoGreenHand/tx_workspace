@@ -1,6 +1,5 @@
 import os
 
-
 # 注意，celery4版本后，CELERY_BROKER_URL改为BROKER_URL
 
 # https://docs.celeryproject.org/en/latest/userguide/configuration.html#broker-url
