@@ -24,6 +24,7 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate
 )
 from langchain.vectorstores.elasticsearch import ElasticsearchStore
+from langchain.retrievers import ChatGPTPluginRetriever
 
 
 def track_tokens_usage(chain, chain_input):
@@ -44,7 +45,7 @@ def use_langchain():
     llm = OpenAI(
         openai_api_key=app.config["OPENAI_API_KEY"], openai_proxy="http://127.0.0.1:7890")
 
-    system_template = """你是一个 ai 聊天助手, 我们之间是有聊天记录的下面就是:
+    system_template = """你是一个 ai 聊天助手, 我们之间是有聊天记录的下面就是(--> 前面是提问，后面是回答):
         {chat_history}
         请你继续回答我的问题，我的问题是: {question} """
 
@@ -70,13 +71,13 @@ def use_langchain():
         topic_id=topic_id,
         user_id=request.current_user.id,
         question=question,
-        answer=result["answer"]
+        answer=result["text"]
     )
 
     db.session.add(new_history)
     db.session.commit()
 
-    return context.success(data={"answer": result["answer"], "topic_id": topic_id})
+    return context.success(data={"answer": result["text"], "topic_id": topic_id})
 
 
 @api.route('/images', methods=['POST'])
