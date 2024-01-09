@@ -50,7 +50,7 @@ def update_workspace(id):
 
 @api.route('/workspaces', methods=['GET'])
 @mark_readonly()
-@context.custom_jwt_required
+# @context.custom_jwt_required
 def get_workspaces():
     workspaces = Workspace.query.all()
     return context.success(data=workspaces)

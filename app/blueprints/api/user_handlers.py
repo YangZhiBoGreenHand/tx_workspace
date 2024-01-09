@@ -1,4 +1,3 @@
-
 import time
 from flask import jsonify, request
 from .blueprint import api
@@ -34,15 +33,15 @@ def register():
 
 @api.route('/login', methods=['POST'])
 def login():
+    print(111111111)
     # 处理登录表单提交
-    phone_number = request.form['phone_number']
-    password = request.form['password']
+    phone_number = request.json['phone_number']
+    password = request.json['password']
     user = User.query.filter_by(phone_number=phone_number).first()
     if user and user.check_password(password):
         # 用户名和密码匹配，登录成功
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-
         return jsonify(access_token=access_token, refresh_token=refresh_token), 200
     else:
         # 用户名或密码不匹配，登录失败

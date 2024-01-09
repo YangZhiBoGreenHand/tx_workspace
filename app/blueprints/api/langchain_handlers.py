@@ -34,10 +34,10 @@ def track_tokens_usage(chain, chain_input):
         return result
 
 
-@api.route('/langchain', methods=['POST'])
+@api.route('/text', methods=['POST'])
 @mark_readwrite()
 @context.custom_jwt_required
-def use_langchain():
+def get_text():
     data = request.json
     question = data.get('question')
     topic_id = data.get('topic_id')
@@ -90,7 +90,7 @@ def get_images():
         openai_api_key=app.config["OPENAI_API_KEY"], openai_proxy="http://127.0.0.1:7890")
     prompt = PromptTemplate(
         input_variables=["image_desc"],
-        template="Generate a detailed prompt to generate an image based on the following description: {image_desc}",
+        template="Generate a prompt to generate an image based on the following description: {image_desc}",
     )
     chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
     image_url = DallEAPIWrapper().run(chain.run(question))
@@ -113,7 +113,7 @@ def use_langchain_with_es_vector():
     USERNAME = "elastic"
     PASSWORD = "elastic"
     ELATICSEARCH_ENDPOINT = "localhost:9200"
-    ELASTCSEARCH_CERT_PATH = "/Users/yangzhibo/projects/tx_workspace/http_ca.crt"
+    ELASTCSEARCH_CERT_PATH = "/Users/yangzhibo/tx_workspace/http_ca.crt"
     url = f'https://{USERNAME}:{PASSWORD}@{ELATICSEARCH_ENDPOINT}'
     es_connection = Elasticsearch(
         url, ca_certs=ELASTCSEARCH_CERT_PATH, verify_certs=True)
@@ -123,21 +123,21 @@ def use_langchain_with_es_vector():
     # docs = text_splitter.split_documents(documents)
 
     # db = ElasticsearchStore.from_documents(docs, embedding=OpenAIEmbeddings(),
-    #                                        index_name="test-basic",
+    #                                        index_name="test_index",
     #                                        es_connection=es_connection)
 
-    db = ElasticsearchStore(
+    es_db = ElasticsearchStore(
         embedding=OpenAIEmbeddings(),
         index_name="test_index",
         es_connection=es_connection
     )
-    db.client.indices.refresh(index="test-basic")
+    es_db.client.indices.refresh(index="test_index")
     # query = "阳志博是毕业于哪儿？"
     # results = db.similarity_search(query)
     # print(results)
     # 创建 retrieval chain 链
     chain = ConversationalRetrievalChain.from_llm(
-        llm=llm, verbose=True, retriever=db.as_retriever(), return_source_documents=True, max_tokens_limit=4097)
+        llm=llm, verbose=True, retriever=es_db.as_retriever(), return_source_documents=True, max_tokens_limit=4097)
 
     history_entries = History.query.filter_by(
         topic_id=topic_id, user_id=request.current_user.id).order_by(History.created_at.desc()).limit(10).all()

@@ -1,8 +1,8 @@
-"""add_user_gpt_models
+"""init_app
 
-Revision ID: 1cd5e3350dd7
+Revision ID: dfe6b855a855
 Revises: 
-Create Date: 2023-12-17 22:40:10.692373
+Create Date: 2023-12-25 16:32:26.337817
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1cd5e3350dd7'
+revision = 'dfe6b855a855'
 down_revision = None
 branch_labels = None
 depends_on = None

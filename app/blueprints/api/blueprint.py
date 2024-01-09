@@ -14,6 +14,7 @@ def handle_exception(e):
         response.status_code = 400
         return response
 
+    app.logger.error("Internal Server Error: %s", e)
     # 对于不可预知的错误，可以返回一个通用的500响应
     response = jsonify(message=print(e))
     response.status_code = 500
