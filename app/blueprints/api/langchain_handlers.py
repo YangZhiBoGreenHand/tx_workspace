@@ -17,12 +17,13 @@ from langchain.chains import ConversationalRetrievalChain, LLMChain, Conversatio
 from app.base import app, db
 from langchain.prompts import PromptTemplate
 from langchain.utilities.dalle_image_generator import DallEAPIWrapper
-from langchain.llms.openai import OpenAI
+from langchain_community.llms.openai import OpenAI
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate
 )
+
 from langchain.vectorstores.elasticsearch import ElasticsearchStore
 from langchain.retrievers import ChatGPTPluginRetriever
 
@@ -131,11 +132,12 @@ def use_langchain_with_es_vector():
         index_name="test_index",
         es_connection=es_connection
     )
-    es_db.client.indices.refresh(index="test_index")
+    # es_db.client.indices.refresh(index="test_index")
     # query = "阳志博是毕业于哪儿？"
     # results = db.similarity_search(query)
     # print(results)
     # 创建 retrieval chain 链
+
     chain = ConversationalRetrievalChain.from_llm(
         llm=llm, verbose=True, retriever=es_db.as_retriever(), return_source_documents=True, max_tokens_limit=4097)
 
@@ -145,6 +147,7 @@ def use_langchain_with_es_vector():
     # 添加用户历史记录
     chat_history = reversed([(history_entry.question, history_entry.answer)
                              for history_entry in history_entries])
+
     chain_input = {"question": question, "chat_history": chat_history}
     result = track_tokens_usage(chain, chain_input)
     # 创建用户主题，和 历史记录

@@ -33,6 +33,7 @@ Flask-Migrate==4.0.5
 flask-redis==0.4.0
 Flask-SQLAlchemy==3.1.1
 frozenlist==1.4.1
+gunicorn==23.0.0
 h11==0.14.0
 httpcore==1.0.2
 httpx==0.25.2
@@ -95,7 +96,6 @@ typing-inspect==0.9.0
 typing_extensions==4.9.0
 tzdata==2023.3
 urllib3==2.1.0
-uWSGI==2.0.21
 vine==5.1.0
 wcwidth==0.2.12
 Werkzeug==2.3.6
